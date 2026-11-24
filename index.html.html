@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8f1732">
+<title>Sym Gift Exchange 2026</title>
+<style>
+:root{--wine:#8f1732;--red:#c52d48;--gold:#e8bc69;--cream:#fff8ee;--ink:#3b2026;--muted:#826d70;--green:#417a5a}
+*{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:Inter,"PingFang SC","Microsoft YaHei",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 50% 0,#fff9dc 0,#fde5bd 32%,#b51f3b 80%,#741328 100%);padding:16px}
+.app{max-width:680px;margin:auto}.panel{background:rgba(255,251,244,.97);border:1px solid #f4d796;border-radius:26px;padding:22px;box-shadow:0 18px 55px #4e0b1c55}.hero{text-align:center}.hero h1{margin:4px 0;color:var(--wine);font-size:clamp(28px,8vw,42px)}.hero p{margin:5px 0 18px;color:var(--muted)}
+.progress{height:12px;background:#eddcc9;border-radius:99px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--gold));transition:.4s}.progressText{text-align:center;font-weight:800;margin:8px 0 18px}
+.names{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.name{border:1px solid #e6cdb9;border-radius:14px;padding:13px 10px;background:#fff;cursor:pointer;font:inherit;font-weight:750;color:var(--ink)}.name:hover{border-color:var(--wine);transform:translateY(-1px)}.name.done{background:#edf5ef;color:var(--green)}.name.done::after{content:"  ✓"}.name:focus-visible,.primary:focus-visible,.secondary:focus-visible{outline:3px solid #1b72c7;outline-offset:2px}
+.screen{display:none}.screen.active{display:block}.back{border:0;background:transparent;color:var(--wine);font-weight:800;cursor:pointer;padding:7px 0}.boxArea{text-align:center;padding:20px 0}.gift{font-size:95px;line-height:1;filter:drop-shadow(0 10px 8px #0002)}.shake{animation:shake .18s linear infinite}.primary{border:0;border-radius:16px;padding:14px 22px;background:linear-gradient(145deg,var(--red),var(--wine));color:white;font:inherit;font-size:19px;font-weight:900;cursor:pointer;box-shadow:0 8px 20px #8f173244}.primary:disabled{opacity:.52;cursor:not-allowed}.secondary{border:1px solid #d5bba4;border-radius:13px;padding:10px 14px;background:white;color:var(--wine);font:inherit;font-weight:800;cursor:pointer}.result{display:none;text-align:center;background:#fff4d9;border:2px solid var(--gold);border-radius:20px;padding:20px;margin-top:16px;animation:pop .45s ease}.result.show{display:block}.partner{font-size:clamp(34px,10vw,56px);font-weight:950;color:var(--wine);margin:7px}.statusList{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:18px}.status{background:#fff;border:1px solid #ead9ca;border-radius:12px;padding:10px}.status.done{color:var(--green);background:#eff7f1}.admin{margin-top:20px;border-top:1px solid #ead9ca;padding-top:16px;text-align:center}.circle{display:none;margin-top:15px}.circle.show{display:block}.pair{background:white;border-radius:12px;padding:10px;margin:6px 0;border:1px solid #e7d4c3;font-weight:800}.msg{min-height:24px;text-align:center;color:var(--wine);font-weight:700;margin:9px 0}.online{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:#c0392b}.dot.ok{background:#3a9b5b}
+dialog{border:0;border-radius:20px;padding:22px;width:min(360px,90%);box-shadow:0 20px 60px #0005}dialog::backdrop{background:#2c0714aa}input{width:100%;padding:12px;border:1px solid #cdb8a8;border-radius:10px;font:inherit;margin:10px 0}.actions{display:flex;justify-content:flex-end;gap:8px}
+@keyframes shake{25%{transform:rotate(-5deg) scale(1.03)}75%{transform:rotate(5deg) scale(.98)}}@keyframes pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@media(max-width:380px){body{padding:8px}.panel{padding:15px;border-radius:20px}.names,.statusList{gap:7px}.name{padding:11px 6px}}
+</style>
+</head>
+<body>
+<main class="app"><section class="panel">
+<header class="hero"><h1>🎁 Gift Exchange 2026</h1><p>抽出你的礼物搭子，开启一场神秘交换</p><div class="online"><i id="dot" class="dot"></i><span id="connection">正在连接 Firebase…</span></div></header>
+<div class="progress"><div id="bar" class="bar"></div></div><div id="progressText" class="progressText">0 / 10 已完成</div>
+<section id="home" class="screen active"><h2>选择你的名字</h2><p>每人只有一次机会，请确认选择的是自己。</p><div id="names" class="names"></div><div id="statusList" class="statusList"></div></section>
+<section id="draw" class="screen"><button id="back" class="back" type="button">← 返回选择</button><div class="boxArea"><h2 id="hello"></h2><p>点击礼盒，看看谁的礼物在等你</p><div id="gift" class="gift">🎁</div><button id="drawBtn" class="primary" type="button">抽取我的礼物</button><div id="result" class="result"><div>YOU GOT…</div><div id="partner" class="partner"></div><p id="resultCopy"></p></div></div></section>
+<div id="msg" class="msg" aria-live="polite"></div>
+<section class="admin"><button id="revealBtn" class="secondary" type="button">管理员：揭晓 Gift Circle</button><button id="resetBtn" class="secondary" type="button">全部重置</button><div id="circle" class="circle"></div></section>
+</section></main>
+<dialog id="passwordDialog"><form id="passwordForm"><h3 id="dialogTitle">管理员验证</h3><p>请输入管理员密码。</p><input id="password" type="password" inputmode="numeric" autocomplete="off" placeholder="密码"><div id="passwordError" class="msg"></div><div class="actions"><button id="cancel" class="secondary" type="button">取消</button><button class="primary" type="submit">确认</button></div></form></dialog>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getDatabase, ref, onValue, runTransaction, set, onDisconnect } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+const firebaseConfig={apiKey:"AIzaSyBcegpFZJ6CFEUzX5FwIENDVZOQNipoqX8",authDomain:"sym-gift-exchange-2026.firebaseapp.com",databaseURL:"https://sym-gift-exchange-2026-default-rtdb.asia-southeast1.firebasedatabase.app/",projectId:"sym-gift-exchange-2026",storageBucket:"sym-gift-exchange-2026.firebasestorage.app",messagingSenderId:"1049073584514",appId:"1:1049073584514:web:9fea8e489c4023de55a79b",measurementId:"G-C4QYMQF44N"};
+const people=["Evelyn","Tracy","Cici","Grace","Amy","Sunny","Jules","Taro","Janet","Muzi"];
+const app=initializeApp(firebaseConfig), db=getDatabase(app), gameRef=ref(db,"giftExchange2026");
+const $=s=>document.querySelector(s); let game={}, current=null, busy=false, adminAction="";
+function makeCircle(){const a=[...people];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}const map={};a.forEach((p,i)=>map[p]=a[(i+1)%a.length]);return map}
+function showMsg(t){$("#msg").textContent=t;setTimeout(()=>{if($("#msg").textContent===t)$("#msg").textContent=""},3000)}
+function render(){const claimed=game.claimed||{}, n=Object.keys(claimed).length;$("#bar").style.width=(n*10)+"%";$("#progressText").textContent=`${n} / 10 已完成`;
+ $("#names").innerHTML="";people.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="name"+(claimed[p]?" done":"");b.textContent=p;b.onclick=()=>selectPerson(p);$("#names").appendChild(b)});
+ $("#statusList").innerHTML=people.map(p=>`<div class="status ${claimed[p]?"done":""}">${claimed[p]?"✓":"🎁"} ${p}</div>`).join("");
+ if(current&&claimed[current])showOwnResult(claimed[current]);}
+function selectPerson(p){current=p;$("#home").classList.remove("active");$("#draw").classList.add("active");$("#hello").textContent=`Hi, ${p}!`;$("#result").classList.remove("show");$("#drawBtn").disabled=!!(game.claimed||{})[p];$("#drawBtn").textContent=(game.claimed||{})[p]?"已经完成抽取":"抽取我的礼物";if((game.claimed||{})[p])showOwnResult(game.claimed[p])}
+function showOwnResult(partner){$("#partner").textContent=`🎁 ${partner}`;$("#resultCopy").textContent=`你将收到 ${partner} 准备的神秘礼物`;$("#result").classList.add("show");$("#drawBtn").disabled=true;$("#drawBtn").textContent="已经完成抽取"}
+$("#back").onclick=()=>{$("#draw").classList.remove("active");$("#home").classList.add("active");current=null};
+$("#drawBtn").onclick=async()=>{if(!current||busy)return;if(!confirm(`请确认：你是 ${current}，且每人只能抽一次？`))return;busy=true;$("#drawBtn").disabled=true;$("#gift").classList.add("shake");$("#drawBtn").textContent="正在抽取…";
+ try{const res=await runTransaction(gameRef,data=>{data=data||{};data.assignments=data.assignments||makeCircle();data.claimed=data.claimed||{};if(data.claimed[current])return;data.claimed[current]=data.assignments[current];data.updatedAt=Date.now();return data},{applyLocally:false});setTimeout(()=>{$("#gift").classList.remove("shake");if(res.committed){const d=res.snapshot.val();showOwnResult(d.claimed[current]);showMsg("抽取成功，结果已实时保存")}else{showMsg("该名字已经完成抽取")};busy=false},1800)}catch(e){$("#gift").classList.remove("shake");$("#drawBtn").disabled=false;$("#drawBtn").textContent="重新尝试";showMsg("连接失败，请检查网络后重试");busy=false}};
+function askAdmin(action){adminAction=action;$("#dialogTitle").textContent=action==="reset"?"重置全部记录":"揭晓 Gift Circle";$("#password").value="";$("#passwordError").textContent="";$("#passwordDialog").showModal()}
+$("#revealBtn").onclick=()=>askAdmin("reveal");$("#resetBtn").onclick=()=>askAdmin("reset");$("#cancel").onclick=()=>$("#passwordDialog").close();
+$("#passwordForm").onsubmit=async e=>{e.preventDefault();if($("#password").value!=="1010"){$("#passwordError").textContent="密码不正确";return}$("#passwordDialog").close();if(adminAction==="reset"){if(!confirm("确认清空全部抽取记录？"))return;await set(gameRef,null);$("#circle").classList.remove("show");showMsg("全部记录已重置")}else{const n=Object.keys(game.claimed||{}).length;if(n<10&&!confirm(`目前只有 ${n}/10 完成，仍要提前揭晓吗？`))return;const m=game.assignments||{};$("#circle").innerHTML="<h3>🎉 THE GIFT CIRCLE</h3>"+people.map(p=>`<div class="pair">${p} → ${m[p]||"等待生成"} 🎁</div>`).join("");$("#circle").classList.add("show")}};
+onValue(ref(db,".info/connected"),s=>{const ok=!!s.val();$("#dot").classList.toggle("ok",ok);$("#connection").textContent=ok?"已连接，数据实时同步":"连接中或当前网络不可用"});
+onValue(gameRef,s=>{game=s.val()||{};render()},e=>showMsg("数据库读取失败，请检查 Firebase 规则"));
+</script></body></html>
